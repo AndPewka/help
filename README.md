@@ -41,7 +41,7 @@ active_proxy_groups_ids.each do |id|
 end
 ```
 
-### MAIL READER ###
+### Mail reader ###
 ```ruby
 resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_mail_accounts", nil , { "Authorization": ENV["USER_API_TOKEN"] };accs = JSON.parse(resp.body);accs.each { |a| a["setting_id"]=1;a.delete("id"); Account.create! a }
 ```
