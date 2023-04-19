@@ -46,6 +46,16 @@ end
 resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_mail_accounts", nil , { "Authorization": ENV["USER_API_TOKEN"] };accs = JSON.parse(resp.body);accs.each { |a| a["setting_id"]=1;a.delete("id"); Account.create! a }
 ```
 
+
+### Accounts ###
+```ruby
+Account.select("DISTINCT ON (login, service_id) *").all.each do |account|
+  if Account.where(login: account.login, service_id: account.service_id).count > 1
+    account.destroy
+  end
+end
+```
+
 ## DATABASE ##
 
 ### Get dump ##
