@@ -47,7 +47,7 @@ resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_mail
 ```
 
 
-### Accounts ###
+### Drop accounts duplicate###
 ```ruby
 Account.select("DISTINCT ON (login, service_id) *").all.each do |account|
   if Account.where(login: account.login, service_id: account.service_id).count > 1
