@@ -47,7 +47,7 @@ resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_mail
 ```
 
 
-### Drop accounts duplicate###
+### Drop accounts duplicate ###
 ```ruby
 Account.select("DISTINCT ON (login, service_id) *").all.each do |account|
   if Account.where(login: account.login, service_id: account.service_id).count > 1
@@ -66,7 +66,8 @@ docker exec backend_postgres_1 pg_dump -U postgres antifraud_development > backu
 ```ruby
 docker container prune
 rails db:create
-docker cp backup.dump backend_postgres_1:/backup.dump
+docker cp dumps/postgres.dump backend_postgres_1:/postgres.dump
 docker exec -it backend_postgres_1 bash
-psql -U postgres -d antifraud_development < backup.dump
+pg_restore -h localhost -U postgres -d antifraud_development -1 postgres.dump
+# psql -U postgres -d antifraud_development < backup.dump
 ```
