@@ -60,7 +60,7 @@ end
 
 ### Get dump ##
 ```ruby
-docker exec backend_postgres_1 pg_dump -U postgres antifraud_development > backup.dump
+docker exec backend_postgres-1 pg_dump -U postgres antifraud_development > backup.dump
 ```
 ### Put dump ###
 ```ruby
