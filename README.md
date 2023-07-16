@@ -28,11 +28,6 @@ gem install ruby-opencv -- --with-opencv-dir=/usr/local
 
 ## Fetch data ##
 
-### Drop expiration proxy ###
-```ruby
-Proxy.where(state: [:working, :disabled]).select { |proxy| proxy.expiration < Time.current }.each { |proxy| proxy.update! state: :archived }
-Proxy.where(state: :archived).each {|proxy| ProxyRemoveWorker.new.perform(proxy.id, proxy.proxy_group_id)}
-```
 ### Add proxy ###
 ```ruby
 active_proxy_groups_ids = [2, 23, 27] # ru ua eu
@@ -40,12 +35,6 @@ active_proxy_groups_ids.each do |id|
   resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_proxies_by_group_id", { id: id } , { "Authorization": ENV["USER_API_TOKEN"] };proxies = JSON.parse(resp.body);proxies.each { |p| p["ip"] = p.delete("host"); Proxy.create! p }
 end
 ```
-
-### Mail reader ###
-```ruby
-resp = Faraday.get "https://api.antifraudsms.com/api/v1/share_resources/get_mail_accounts", nil , { "Authorization": ENV["USER_API_TOKEN"] };accs = JSON.parse(resp.body);accs.each { |a| a["setting_id"]=1;a.delete("id"); Account.create! a }
-```
-
 
 ### Drop accounts duplicate ###
 ```ruby
@@ -55,6 +44,23 @@ Account.select("DISTINCT ON (login, service_id) *").all.each do |account|
   end
 end
 ```
+
+### Get mail_reader acc csv(outlook example) ###
+```ruby
+csv_text = File.read('accounts.csv')
+csv = CSV.parse(csv_text, headers: true)
+csv.take(500).each do |row|
+Account.create(
+    service_id: 33,
+    login: row['Login'],
+    password: row['Password'],
+    parameters: JSON.parse(row['Parameters'].gsub(/=>/, ":")),
+    setting_id: 1
+)
+  end
+```
+
+
 
 ## DATABASE ##
 
