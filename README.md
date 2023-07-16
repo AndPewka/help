@@ -4,6 +4,9 @@
 ```ruby
 apt-get install -y cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 apt-get install -y python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
+# sudo apt-get install -y python-dev-is-python3 libtbbmalloc2 libjpeg-dev libpng-dev libtiff-dev libdc1394-dev
+# pyenv shell 3
+# pip install numpy
 
 git clone -b 2.4 --single-branch --progress https://github.com/opencv/opencv.git /tmp/opencv
 
