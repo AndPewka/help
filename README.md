@@ -22,7 +22,8 @@ cmake -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D WITH_OPENGL=OFF \
 -D WITH_FFMPEG=OFF \
 -D FORCE_VTK=OFF \
--D ENABLE_PRECOMPILED_HEADERS=OFF .. && \
+-D ENABLE_PRECOMPILED_HEADERS=OFF \
+-D WITH_OPENEXR=OFF .. && \
 make -j$(nproc) && sudo make install
 
 gem install ruby-opencv -- --with-opencv-dir=/usr/local
@@ -48,18 +49,28 @@ end
 ```
 
 ### Get mail_reader acc csv(outlook example) ###
+
+
+### get 
 ```ruby
-csv_text = File.read('accounts.csv')
-csv = CSV.parse(csv_text, headers: true)
-csv.take(500).each do |row|
-Account.create(
-    service_id: 33,
-    login: row['Login'],
-    password: row['Password'],
-    parameters: JSON.parse(row['Parameters'].gsub(/=>/, ":")),
-    setting_id: 1
-)
+accounts = Account.where(service_id: 33, two_step: true).limit(2000)
+
+CSV.open("accounts.csv", "wb") do |csv|
+  csv << Account.column_names
+  accounts.each do |account|
+    csv << account.attributes.values
   end
+end
+```
+
+### put 
+```ruby
+CSV.foreach("accounts.csv", headers: true) do |row|
+  row_hash = row.to_hash
+  row_hash.delete('id') # Удалить 'id' из хэша
+  row_hash['parameters'] = eval(row_hash['parameters'])
+  Account.create!(row_hash)
+ end
 ```
 
 
